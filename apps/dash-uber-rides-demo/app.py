@@ -1,6 +1,6 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 import pandas as pd
 import numpy as np
 
@@ -13,12 +13,12 @@ from datetime import datetime as dt
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],
 )
-app.title = "New York Uber Rides"
+app.title = "Ukraine Violent Incident Information"
 server = app.server
 
 
 # Plotly mapbox public token
-mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"
+mapbox_access_token = "pk.eyJ1IjoiY29jb3Bvd2RlciIsImEiOiJjbGN6MGlzZDkwcm0xM29xbHRtcjZnYzhjIn0.YTw91hyIDHIfbNVTYoIQXw"
 
 # Dictionary of important locations in New York
 list_of_locations = {
@@ -35,18 +35,10 @@ list_of_locations = {
 
 # Initialize data frame
 df1 = pd.read_csv(
-    "https://raw.githubusercontent.com/plotly/datasets/master/uber-rides-data1.csv",
-    dtype=object,
+    "event_latest.csv",
+    dtype=object
 )
-df2 = pd.read_csv(
-    "https://raw.githubusercontent.com/plotly/datasets/master/uber-rides-data2.csv",
-    dtype=object,
-)
-df3 = pd.read_csv(
-    "https://raw.githubusercontent.com/plotly/datasets/master/uber-rides-data3.csv",
-    dtype=object,
-)
-df = pd.concat([df1, df2, df3], axis=0)
+df = pd.concat([df1], axis=0)
 df["Date/Time"] = pd.to_datetime(df["Date/Time"], format="%Y-%m-%d %H:%M")
 df.index = df["Date/Time"]
 df.drop("Date/Time", 1, inplace=True)
@@ -75,7 +67,7 @@ app.layout = html.Div(
                             ),
                             href="https://plotly.com/dash/",
                         ),
-                        html.H2("DASH - UBER DATA APP"),
+                        html.H2("Ukraine Violent Incident Information"),
                         html.P(
                             """Select different days using the date picker or by selecting
                             different time frames on the histogram."""
@@ -256,7 +248,7 @@ def update_total_rides(datePicked):
 def update_total_rides_selection(datePicked, selection):
     firstOutput = ""
 
-    if selection is not None or len(selection) is not 0:
+    if selection is not None or len(selection) != 0:
         date_picked = dt.strptime(datePicked, "%Y-%m-%d")
         totalInSelection = 0
         for x in selection:
@@ -271,8 +263,8 @@ def update_total_rides_selection(datePicked, selection):
     if (
         datePicked is None
         or selection is None
-        or len(selection) is 24
-        or len(selection) is 0
+        or len(selection) == 24
+        or len(selection) == 0
     ):
         return firstOutput, (datePicked, " - showing hour(s): All")
 
@@ -367,7 +359,7 @@ def getLatLonColor(selectedData, month, day):
     listCoords = totalList[month][day]
 
     # No times selected, output all times for chosen month and date
-    if selectedData is None or len(selectedData) is 0:
+    if selectedData is None or len(selectedData) == 0:
         return listCoords
     listStr = "listCoords["
     for time in selectedData:
@@ -388,9 +380,9 @@ def getLatLonColor(selectedData, month, day):
     ],
 )
 def update_graph(datePicked, selectedData, selectedLocation):
-    zoom = 12.0
-    latInitial = 40.7272
-    lonInitial = -73.991251
+    zoom = 5
+    latInitial = 50.450001
+    lonInitial = 30.523333
     bearing = 0
 
     if selectedLocation:
@@ -474,9 +466,9 @@ def update_graph(datePicked, selectedData, selectedLocation):
                             dict(
                                 args=[
                                     {
-                                        "mapbox.zoom": 12,
-                                        "mapbox.center.lon": "-73.991251",
-                                        "mapbox.center.lat": "40.7272",
+                                        "mapbox.zoom": 5,
+                                        "mapbox.center.lon": "50.450001",
+                                        "mapbox.center.lat": "30.523333",
                                         "mapbox.bearing": 0,
                                         "mapbox.style": "dark",
                                     }
